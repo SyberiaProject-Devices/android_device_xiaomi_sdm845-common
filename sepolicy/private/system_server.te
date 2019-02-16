@@ -1,4 +1,0 @@
-#Allow userspace to write to battery supply nodes
-allow system_server sysfs_battery_supply:file rw_file_perms;
-
-get_prop(system_server, vendor_camera_prop)

@@ -1,0 +1,32 @@
+genfscon sysfs /devices/platform/soc/ae00000.qcom,mdss_mdp/idle_state            u:object_r:sysfs_graphics:s0
+genfscon sysfs /devices/virtual/graphics/fb0                            u:object_r:sysfs_graphics:s0
+genfscon sysfs /devices/virtual/graphics/fb1                            u:object_r:sysfs_graphics:s0
+
+genfscon sysfs /power/rpmh_stats/master_stats         u:object_r:sysfs_rpm:s0
+genfscon sysfs /power/system_sleep/stats              u:object_r:sysfs_system_sleep_stats:s0
+
+genfscon debugfs /wlan0                               u:object_r:debugfs_wlan:s0
+
+genfscon sysfs /devices/platform/soc/soc:qcom,cpubw            u:object_r:sysfs_msm_subsys:s0
+genfscon sysfs /devices/platform/soc/soc:qcom,llccbw           u:object_r:sysfs_msm_subsys:s0
+genfscon sysfs /devices/platform/soc/soc:qcom,mincpubw         u:object_r:sysfs_msm_subsys:s0
+genfscon sysfs /devices/platform/soc/soc:qcom,l3-cpu0          u:object_r:sysfs_msm_subsys:s0
+genfscon sysfs /devices/platform/soc/soc:qcom,l3-cpu4          u:object_r:sysfs_msm_subsys:s0
+genfscon sysfs /class/devfreq                                  u:object_r:sysfs_msm_subsys:s0
+genfscon sysfs /devices/platform/soc/soc:qcom,memlat-cpu0      u:object_r:sysfs_msm_subsys:s0
+genfscon sysfs /devices/platform/soc/soc:qcom,memlat-cpu4      u:object_r:sysfs_msm_subsys:s0
+genfscon sysfs /devices/platform/soc/soc:qcom,l3-cpu0/devfreq  u:object_r:sysfs_msm_subsys:s0
+genfscon sysfs /devices/platform/soc/soc:qcom,l3-cpu4/devfreq  u:object_r:sysfs_msm_subsys:s0
+genfscon sysfs /devices/platform/soc/soc:qcom,llccbw/devfreq   u:object_r:sysfs_msm_subsys:s0
+genfscon sysfs /devices/platform/soc/894000.i2c                                  u:object_r:sysfs_msm_subsys:s0
+genfscon sysfs /devices/platform/soc/soc:qcom,gpubw                              u:object_r:sysfs_msm_subsys:s0
+genfscon sysfs /devices/platform/soc/c440000.qcom,spmi                           u:object_r:sysfs_msm_subsys:s0
+genfscon sysfs /devices/platform/soc/4080000.qcom,mss                            u:object_r:sysfs_msm_subsys:s0
+genfscon sysfs /devices/platform/soc/17300000.qcom,lpass                         u:object_r:sysfs_msm_subsys:s0
+genfscon sysfs /devices/platform/soc/188101c.qcom,spss                           u:object_r:sysfs_msm_subsys:s0
+genfscon sysfs /devices/platform/soc/5c00000.qcom,ssc                            u:object_r:sysfs_msm_subsys:s0
+genfscon sysfs /devices/platform/soc/ae00000.qcom,mdss_rotator                   u:object_r:sysfs_msm_subsys:s0
+
+genfscon debugfs /sched_features                      u:object_r:debugfs_sched_features:s0
+
+genfscon proc /sys/kernel/sched_boost                 u:object_r:proc_sysctl_schedboost:s0

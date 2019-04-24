@@ -1,0 +1,6 @@
+# Power HAL
+/system/bin/hw/android\.hardware\.power@1\.3-service\.dipper-libperfmgr u:object_r:hal_power_dipper_exec:s0
+/dev/cpu_dma_latency                            u:object_r:latency_device:s0
+
+# Light HAL
+/system/bin/hw/android\.hardware\.light@2\.0-service\.xiaomi_sdm845    u:object_r:hal_light_sdm845_exec:s0

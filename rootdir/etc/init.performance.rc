@@ -1,10 +1,5 @@
 
 on init
-    # Enable UFS powersaving
-    write /sys/devices/soc/${ro.boot.bootdevice}/clkscale_enable 1
-    write /sys/devices/soc/${ro.boot.bootdevice}/clkgate_enable 1
-    write /sys/module/lpm_levels/parameters/sleep_disabled N
-
     # Disable Boost_No_Override
     write /dev/stune/foreground/schedtune.sched_boost_no_override 0
     write /dev/stune/top-app/schedtune.sched_boost_no_override 0
@@ -33,18 +28,76 @@ on property:sys.boot_completed=1
     # default readahead to 2048KB. We should adjust the setting upon boot_complete
     # for runtime performance
     write /sys/block/sda/queue/read_ahead_kb 128
-    write /sys/block/sda/queue/nr_requests 128
-    write /sys/block/sda/queue/iostats 1
-    write /sys/block/sdf/queue/read_ahead_kb 128
-    write /sys/block/sdf/queue/nr_requests 128
-    write /sys/block/sdf/queue/iostats 1
+    write /sys/block/sda/queue/nr_requests 32
+    write /sys/block/sda/queue/add_random 0
+    write /sys/block/sda/queue/iostats 0
+    write /sys/block/sda/queue/nomerges 0
+    write /sys/block/sda/queue/rotational 0
+    write /sys/block/sda/queue/rq_affinity 1
     write /sys/block/sde/queue/read_ahead_kb 128
-    write /sys/block/sde/queue/nr_requests 128
-    write /sys/block/sde/queue/iostats 1
+    write /sys/block/sde/queue/nr_requests 32
+    write /sys/block/sde/queue/add_random 0
+    write /sys/block/sde/queue/iostats 0
+    write /sys/block/sde/queue/nomerges 0
+    write /sys/block/sde/queue/rotational 0
+    write /sys/block/sde/queue/rq_affinity 1
+    write /sys/block/sdf/queue/read_ahead_kb 128
+    write /sys/block/sdf/queue/nr_requests 32
+    write /sys/block/sdf/queue/add_random 0
+    write /sys/block/sdf/queue/iostats 0
+    write /sys/block/sdf/queue/nomerges 0
+    write /sys/block/sdf/queue/rotational 0
+    write /sys/block/sdf/queue/rq_affinity 1
     write /sys/block/dm-0/queue/read_ahead_kb 128
     write /sys/block/dm-1/queue/read_ahead_kb 128
     write /sys/block/dm-2/queue/read_ahead_kb 128
     write /sys/block/dm-3/queue/read_ahead_kb 128
+
+    # Tweak CFQ IO scheduler for less latency
+    write /sys/block/sda/queue/iosched/quantum 4
+    write /sys/block/sda/queue/iosched/fifo_expire_sync 80
+    write /sys/block/sda/queue/iosched/fifo_expire_async 330
+    write /sys/block/sda/queue/iosched/back_seek_max 12582912
+    write /sys/block/sda/queue/iosched/back_seek_penalty 1
+    write /sys/block/sda/queue/iosched/slice_sync 60
+    write /sys/block/sda/queue/iosched/slice_async 50
+    write /sys/block/sda/queue/iosched/slice_async_rq 2
+    write /sys/block/sda/queue/iosched/group_idle 0
+    write /sys/block/sde/queue/iosched/quantum 4
+    write /sys/block/sde/queue/iosched/fifo_expire_sync 80
+    write /sys/block/sde/queue/iosched/fifo_expire_async 330
+    write /sys/block/sde/queue/iosched/back_seek_max 12582912
+    write /sys/block/sde/queue/iosched/back_seek_penalty 1
+    write /sys/block/sde/queue/iosched/slice_sync 60
+    write /sys/block/sde/queue/iosched/slice_async 50
+    write /sys/block/sde/queue/iosched/slice_async_rq 2
+    write /sys/block/sde/queue/iosched/group_idle 0
+    write /sys/block/sdf/queue/iosched/quantum 4
+    write /sys/block/sdf/queue/iosched/fifo_expire_sync 80
+    write /sys/block/sdf/queue/iosched/fifo_expire_async 330
+    write /sys/block/sdf/queue/iosched/back_seek_max 12582912
+    write /sys/block/sdf/queue/iosched/back_seek_penalty 1
+    write /sys/block/sdf/queue/iosched/slice_sync 60
+    write /sys/block/sdf/queue/iosched/slice_async 50
+    write /sys/block/sdf/queue/iosched/slice_async_rq 2
+    write /sys/block/sdf/queue/iosched/group_idle 0
+
+    # Disable CAF task placement for Big Cores
+    write /proc/sys/kernel/sched_walt_rotate_big_tasks 0
+
+    # Setup EAS cpusets values for better load balancing
+    write /dev/cpuset/top-app/cpus "0-7"
+
+    # Since we are not using core rotator, lets load balance
+    write /dev/cpuset/foreground/cpus "0-3,6-7"
+    write /dev/cpuset/background/cpus "0-1"
+    write /dev/cpuset/system-background/cpus "0-3"
+
+    # Manually force all of the kernel tasks to be applied upon the low power cores / cluster for power saving reasons;
+    write /dev/cpuset/kernel/cpus "0-3"
+
+    # For better screen off idle
+    write /dev/cpuset/restricted/cpus "0-3"
  
     # configure governor settings for little cluster
     write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor "schedutil"
@@ -61,8 +114,21 @@ on property:sys.boot_completed=1
     # Increase how much CPU bandwidth (CPU time) realtime scheduling processes are given
     write /proc/sys/kernel/sched_rt_runtime_us 980000
 
+    # Reduce swappiness: 100 -> 85 (since December update)
+    # This reduces kswapd0 CPU usage, leading to
+    # better performance and battery due to less CPU time used
+    write /proc/sys/vm/swappiness 65
+
+    # Disable a few minor and overall pretty useless modules for slightly better battery life & system wide performance;
+    write /sys/module/bluetooth/parameters/disable_ertm "Y"
+    write /sys/module/bluetooth/parameters/disable_esco "Y"
+
+    # Use the deepest CPU idle state for a few additional power savings if your kernel of choice now supports it;
+    write /sys/devices/system/cpu/cpuidle/use_deepest_state 1
+
+    # Enable display / screen panel power saving features;
+    write /sys/kernel/debug/dsi_ss_ea8074_notch_fhd_cmd_display/dsi-phy-0_allow_phy_power_off "Y"
+    write /sys/kernel/debug/dsi_ss_ea8074_notch_fhd_cmd_display/ulps_enable "Y"
+
     #Enable suspend to idle mode to reduce latency during suspend/resume
     write /sys/power/mem_sleep "s2idle"
-
-    #Configure Thermal Profile
-    write /sys/class/thermal/thermal_message/sconfig 10

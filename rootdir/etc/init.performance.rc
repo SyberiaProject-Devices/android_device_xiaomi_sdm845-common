@@ -21,6 +21,9 @@ on boot
     setprop debug.sqlite.syncmode OFF
 
 on property:sys.boot_completed=1
+    #Enable franco profiles
+    setprop fku.profiles 1
+    
     # Set the default IRQ affinity to the silver cluster.
     write /proc/irq/default_smp_affinity "f"
 
@@ -132,3 +135,33 @@ on property:sys.boot_completed=1
 
     #Enable suspend to idle mode to reduce latency during suspend/resume
     write /sys/power/mem_sleep "s2idle"
+
+# Power saving profile
+on property:fku.perf.profile=0
+    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq 1516800
+    write /sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq 1056000
+    write /sys/module/cpu_input_boost/parameters/input_boost_freq_lp 979200
+    write /sys/module/cpu_input_boost/parameters/input_boost_freq_hp 0
+    write /sys/module/cpu_input_boost/parameters/input_boost_duration 32
+    write /sys/module/cpu_input_boost/parameters/dynamic_stune_boost 0
+    write /sys/class/thermal/thermal_message/sconfig 11
+
+ # Balance (FK defaults)
+on property:fku.perf.profile=1
+    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq 1766400
+    write /sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq 2169600
+    write /sys/module/cpu_input_boost/parameters/input_boost_freq_lp 1056000
+    write /sys/module/cpu_input_boost/parameters/input_boost_freq_hp 902400
+    write /sys/module/cpu_input_boost/parameters/input_boost_duration 64
+    write /sys/module/cpu_input_boost/parameters/dynamic_stune_boost 15
+    write /sys/class/thermal/thermal_message/sconfig 10
+
+ # Performance
+on property:fku.perf.profile=2
+    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq 1766400
+    write /sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq 2803200
+    write /sys/module/cpu_input_boost/parameters/input_boost_freq_lp 1516800
+    write /sys/module/cpu_input_boost/parameters/input_boost_freq_hp 1363200
+    write /sys/module/cpu_input_boost/parameters/input_boost_duration 125
+    write /sys/module/cpu_input_boost/parameters/dynamic_stune_boost 50
+    write /sys/class/thermal/thermal_message/sconfig 10 

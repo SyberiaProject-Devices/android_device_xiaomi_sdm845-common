@@ -51,7 +51,7 @@ PRODUCT_DEXPREOPT_SPEED_APPS += \
 # Display
 PRODUCT_PACKAGES += \
     libvulkan \
-    vendor.display.config@1.0
+    vendor.display.config@1.7
 
 # Fingerprint
 PRODUCT_COPY_FILES += \

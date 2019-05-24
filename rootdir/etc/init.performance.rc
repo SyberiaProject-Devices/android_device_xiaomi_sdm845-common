@@ -23,6 +23,10 @@ on boot
 on property:sys.boot_completed=1
     #Enable franco profiles
     setprop fku.profiles 1
+
+    # Restart IRQ balancer after boot complete
+	stop vendor.msm_irqbalance;
+    start vendor.msm_irqbalance;
     
     # Set the default IRQ affinity to the silver cluster.
     write /proc/irq/default_smp_affinity "f"

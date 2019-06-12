@@ -100,7 +100,7 @@ PRODUCT_PACKAGES += \
 
 # Common init scripts
 PRODUCT_PACKAGES += \
-    init.performance.rc
+    init.performance.rc \
     init.class_late.sh \
     init.class_main.sh \
     init.msm.usb.configfs.rc \
@@ -139,6 +139,9 @@ PRODUCT_PACKAGES += \
     libdrm.vendor \
     libtinyxml \
     libvulkan \
+    vendor.display.config@1.0.vendor \
+    vendor.display.config@1.1.vendor \
+    vendor.display.config@1.2.vendor \
     vendor.display.config@1.7
 
 # DRM
